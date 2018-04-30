@@ -1,0 +1,29 @@
+---
+- hosts: test_machine
+  become: yes
+
+  pre_tasks:
+  - apt:
+      name: python-docker
+      update_cache: yes
+
+  post_tasks:
+  - apt:
+      name: python-docker
+      state: absent
+      purge: yes
+
+  roles:
+  - role: '.'
+    version: 5.10.9
+    volumes:
+      confluence:
+        data: /srv/docker/confluence/data
+        backups: /srv/docker/confluence/backups
+      database: /srv/docker/confluence/database
+    publish:
+      port: 8090
+      interface: 0.0.0.0
+    database:
+      user: postgres
+      password: my_super_secret_password

@@ -1,0 +1,16 @@
+---
+version: 5.10.9
+
+volumes:
+  confluence:
+    data: ''
+    backups: ''
+  database: ''
+
+publish:
+  port: ''
+  interface: 0.0.0.0
+
+database:
+  user: ''
+  password: ''

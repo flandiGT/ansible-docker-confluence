@@ -1,0 +1,44 @@
+version: '3.1'
+services:
+  confluence:
+    image: {{docker_images.confluence.name}}:{{docker_images.confluence.tag}}
+    container_name: {{docker_containers.confluence.name}}
+{% if docker_containers.confluence.volumes.data != "" and docker_containers.confluence.volumes.backups != "" %}
+    volumes:
+{% if docker_containers.confluence.volumes.data != "" %}
+     - {{docker_containers.confluence.volumes.data}}:/var/atlassian/confluence
+{% endif %}
+{% if docker_containers.confluence.volumes.backups != "" %}
+     - {{docker_containers.confluence.volumes.backups}}:/var/atlassian/confluence/backups
+{% endif %}
+{% endif %}
+{% if docker_containers.confluence.publish.port != "" %}
+    ports:
+     - {{docker_containers.confluence.publish.interface}}:{{docker_containers.confluence.publish.port}}:8090
+{% endif %}
+    links:
+     - postgres:db
+    networks:
+     - {{service_name}}_network
+
+  postgres:
+    image: {{docker_images.postgres.name}}:{{docker_images.postgres.tag}}
+    container_name: {{docker_containers.postgres.name}}
+{% if docker_containers.postgres.environment.user != "" and docker_containers.postgres.environment.password != "" %}
+    environment:
+{% if docker_containers.postgres.environment.user != "" %}
+     - POSTGRES_USER={{docker_containers.postgres.environment.user}}
+{% endif %}
+{% if docker_containers.postgres.environment.password != "" %}
+     - POSTGRES_PASSWORD={{docker_containers.postgres.environment.password}}
+{% endif %}
+{% endif %}
+{% if docker_containers.postgres.volumes.data != "" %}
+    volumes:
+     - {{docker_containers.postgres.volumes.data}}:/var/lib/postgresql/data
+{% endif %}
+    networks:
+     - {{service_name}}_network
+
+networks:
+  {{service_name}}_network:
